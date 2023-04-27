@@ -1,23 +1,27 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet, Text, useColorScheme, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+  SafeAreaView,
+  StatusBar,
+} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-
+import { useNavigation } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {EventNameMap, ProgressStatus} from './constants/progress';
-import {nanoid} from 'nanoid';
+import {EventNameMap, ProgressStatus} from '../constants/progress';
 import dayjs from 'dayjs';
-import { homeProgresses } from './mock/mock-data';
+import {homeProgresses} from '../mock/mock-data';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../App';
+type IndexScreenNavigationProp = NativeStackNavigationProp<RootStackParamList,'Home'>
 
 function Index(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const navigation = useNavigation<IndexScreenNavigationProp>();
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -27,9 +31,13 @@ function Index(): JSX.Element {
   const [data, setData] = useState(homeProgresses);
 
   return (
-    <View>
+    <SafeAreaView style={backgroundStyle}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundStyle.backgroundColor}
+      />
       <View style={styles.topTabs}>
-        <AntDesign name="setting" size={36} />
+        <AntDesign name="setting" size={36} onPress={()=>navigation.navigate('Settings')}/>
         <View style={styles.modeSwitcher}>
           <AntDesign name="home" size={30} />
           <AntDesign name="clockcircleo" size={28} />
@@ -54,7 +62,7 @@ function Index(): JSX.Element {
           </View>
         ))}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 

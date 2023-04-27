@@ -6,68 +6,30 @@
  */
 
 import React from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-} from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Index from './src/screens/index';
+import Settings from './src/screens/settings';
 
-import Index from './src';
-
+type RootStackParamList = {
+  Home: undefined;
+  Settings: undefined;
+  Details: undefined;
+};
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <Index />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={Index} />
+        <Stack.Screen name="Settings" component={Settings} />
+        {/* <Stack.Screen name="Details" component={DetailsScreen} /> */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  topTabs: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    height: 70,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-  },
-  modeSwitcher: {
-    flexDirection: 'row',
-    width: 70,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-});
-
 export default App;
+export type {RootStackParamList};
