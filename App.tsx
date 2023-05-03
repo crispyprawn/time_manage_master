@@ -9,8 +9,8 @@ import React from 'react';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Index from './src/screens/index';
-import Settings from './src/screens/settings';
+import Index from './src/screens/Index';
+import Settings from './src/screens/Settings';
 
 type RootStackParamList = {
   Home: undefined;
