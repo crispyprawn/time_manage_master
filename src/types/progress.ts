@@ -10,6 +10,13 @@ export interface Progress {
 
 export interface Event {
   progressStatus: ProgressStatus;
+  eventID: string;
   eventTime: number;
   calendarSubscribed: boolean;
+  experience?: string;
+}
+
+export interface EventWithCompany extends Event {
+  companyName: string;
+  progressID: string;
 }

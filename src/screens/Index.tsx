@@ -13,18 +13,19 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {EventNameMap, ProgressStatus} from '../constants/progress';
-import dayjs from 'dayjs';
 import {homeProgresses} from '../mock/mock-data';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import CompanyBar from '../components/CompanyBar';
 import {pinyin} from 'pinyin-pro';
 import {Progress} from '../types/progress';
+import CompanyView from '../components/CompanyView';
+import EventView from '../components/EventView';
+import {Tabs, Carousel} from '@ant-design/react-native';
 type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
 >;
+type IndexTab = 'company' | 'event';
 
 function Index(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -33,70 +34,16 @@ function Index(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     padding: 20,
+    height: '100%',
   };
 
   const [data, setData] = useState(homeProgresses);
+  const [currentTab, setCurrentTab] = useState<IndexTab>('company');
 
-  const handleRearrange =
-    (sortBy: 'name' | 'create' | 'update' | 'status') => () => {
-      setData(prevData => {
-        let dataCopy = prevData.slice();
-        dataCopy.sort(comparer(sortBy));
-        return dataCopy;
-      });
-    };
 
-  const comparer = (sortBy: 'name' | 'create' | 'update' | 'status') => {
-    switch (sortBy) {
-      case 'name':
-        return (a: Progress, b: Progress) => {
-          const a1 = pinyin(a.companyName, {
-            toneType: 'none',
-            type: 'array',
-          }).join();
-          const b1 = pinyin(b.companyName, {
-            toneType: 'none',
-            type: 'array',
-          }).join();
-          if (a1 < b1) {
-            return -1;
-          } else if (a1 > b1) {
-            return 1;
-          } else {
-            return 0;
-          }
-        };
-      case 'create':
-        return (a: Progress, b: Progress) => a.createTime - b.createTime;
-      case 'update':
-        return (a: Progress, b: Progress) => a.updateTime - b.updateTime;
-      case 'status':
-        return (a: Progress, b: Progress) => {
-          const a1 = a.events.slice().reverse()[0].progressStatus;
-          const b1 = b.events.slice().reverse()[0].progressStatus;
-          return a1 - b1;
-        };
-      default:
-        return (a: Progress, b: Progress) => {
-          const a1 = a.progressID;
-          const b1 = b.progressID;
-          if (a1 < b1) {
-            return -1;
-          } else if (a1 > b1) {
-            return 1;
-          } else {
-            return 0;
-          }
-        };
-    }
-  };
-
+  const tabs = [{title: 'company'}, {title: 'event'}];
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
       <View style={styles.topTabs}>
         <AntDesign
           name="setting"
@@ -104,30 +51,63 @@ function Index(): JSX.Element {
           onPress={() => navigation.navigate('Settings')}
         />
         <View style={styles.modeSwitcher}>
-          <AntDesign name="home" size={30} />
-          <AntDesign name="clockcircleo" size={28} />
+          <TouchableOpacity>
+            <AntDesign
+              name="home"
+              size={30}
+              onPress={() => setCurrentTab('company')}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <AntDesign
+              name="clockcircleo"
+              size={28}
+              onPress={() => setCurrentTab('event')}
+            />
+          </TouchableOpacity>
         </View>
         <AntDesign name="pluscircleo" size={34} />
       </View>
-      <View style={styles.sortBy}>
-        <TouchableOpacity onPress={handleRearrange('name')}>
-          <Text>by name</Text>
-        </TouchableOpacity>
-        {/* <TouchableOpacity onPress={handleRearrange('create')}><Text>by create time</Text></TouchableOpacity> */}
-        <TouchableOpacity onPress={handleRearrange('update')}>
-          <Text>by update time</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleRearrange('status')}>
-          <Text>by event status</Text>
-        </TouchableOpacity>
+      <View style={styles.tabContents}>
+        {currentTab === 'company' && <CompanyView database={data} />}
+        {currentTab === 'event' && <EventView database={data} />}
       </View>
-      <ScrollView
-      // contentInsetAdjustmentBehavior="automatic"
-      >
-        {data.map(progress => (
-          <CompanyBar progress={progress} key={progress.progressID} />
-        ))}
-      </ScrollView>
+
+
+      {/* <Tabs
+        tabs={tabs}
+        renderTabBar={tabProps => (
+          <View style={styles.tabBar}>
+            {tabProps.tabs.map((tab, i) => (
+              // change the style to fit your needs
+              <TouchableOpacity
+                activeOpacity={0.9}
+                key={tab.key || i}
+                style={{
+                  // width: '30%',
+                  padding: 6,
+                }}
+                onPress={() => {
+                  const {goToTab, onTabClick} = tabProps;
+                  // tslint:disable-next-line:no-unused-expression
+                  onTabClick && onTabClick(tabs[i], i);
+                  // tslint:disable-next-line:no-unused-expression
+                  goToTab && goToTab(i);
+                }}>
+                <Text
+                  style={{
+                    color: tabProps.activeTab === i ? 'green' : '#333333',
+                  }}>
+                  {tab.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+        style={styles.tabContents}>
+        <CompanyView database={data} />
+        <EventView database={data} />
+      </Tabs> */}
     </SafeAreaView>
   );
 }
@@ -150,11 +130,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
   },
+  tabBar: {
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
   modeSwitcher: {
     flexDirection: 'row',
     width: 70,
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  tabContents: {
+    flex: 1,
   },
 });
 
