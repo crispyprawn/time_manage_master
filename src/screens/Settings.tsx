@@ -1,37 +1,31 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, Text} from 'react-native';
+import {ScrollView, Text, Switch} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {
-  Switch,
+  //   Switch,
   List,
   WhiteSpace,
   WingBlank,
   Button,
 } from '@ant-design/react-native';
-import {useStore} from '../hooks/useStore';
 import type {Settings} from '../types/settings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Progress} from '../types/progress';
 import {defaultSettings} from '../constants/defaultSettings';
-function Settings(): JSX.Element {
+import { useSettingsStore } from '../hooks/useSettingsStore';
+import { useUserDataStore } from '../hooks/useUserDataStore';
+export default function Settings(): JSX.Element {
   const navigation = useNavigation();
-  const {getData, setData} = useStore();
-  const [settings, setSettings] = useState<Settings>();
-  const [userData, setUserData] = useState<Progress[]>();
+  //   const {storage: settings, setStorage: setSettings} =
+  //     useStorageByKey<Settings>('settings');
+  //   const {storage: userData, setStorage: setUserData} =
+  //     useStorageByKey<Progress[]>('userData');
 
-  useEffect(() => {
-    getData('settings')
-      .then(res => {
-        setSettings(res);
-      })
-      .catch(err => console.log(err));
-    getData('userData')
-      .then(res => {
-        setUserData(res);
-      })
-      .catch(err => console.log(err));
-  }, [getData]);
 
+  const settings = useSettingsStore(state => state.bears);
+  const userData = useUserDataStore(state => state.bears);
+  const setSettings = useSettingsStore(state => state.setData);
+  const setUserData = useUserDataStore(state => state.setData);
   return (
     <ScrollView>
       {settings && (
@@ -39,13 +33,13 @@ function Settings(): JSX.Element {
           <List.Item
             extra={
               <Switch
-                checked={settings.useMockData}
-                onPress={() =>
-                  setData('settings', {
+                onValueChange={value =>
+                  setSettings({
                     ...settings,
-                    useMockData: !settings.useMockData,
+                    useMockData: value,
                   })
                 }
+                value={settings.useMockData}
               />
             }>
             使用模拟数据
@@ -61,9 +55,19 @@ function Settings(): JSX.Element {
             <Button
               type="primary"
               onPress={() => {
-                setData('settings', defaultSettings);
+                setSettings(defaultSettings);
               }}>
               恢复默认设置
+            </Button>
+          </WingBlank>
+          <WhiteSpace />
+          <WingBlank>
+            <Button
+              type="primary"
+              onPress={() => {
+                setUserData([]);
+              }}>
+              清空用户数据
             </Button>
           </WingBlank>
           <WhiteSpace />
@@ -79,4 +83,3 @@ function Settings(): JSX.Element {
   );
 }
 
-export default Settings;

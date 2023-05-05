@@ -67,9 +67,17 @@ function CompanyView(props: Props): JSX.Element {
         return (a: Progress, b: Progress) => a.updateTime - b.updateTime;
       case 'status':
         return (a: Progress, b: Progress) => {
-          const a1 = a.events.slice().reverse()[0].progressStatus;
-          const b1 = b.events.slice().reverse()[0].progressStatus;
-          return a1 - b1;
+          const a1 = a.events.slice().reverse()[0]?.progressStatus;
+          const b1 = b.events.slice().reverse()[0]?.progressStatus;
+          if (a1 && b1) {
+            return b1 - a1;
+          } else if (a1 && !b1) {
+            return -1;
+          } else if (!a1 && b1) {
+            return 1;
+          } else {
+            return a.createTime - b.createTime;
+          }
         };
       default:
         return (a: Progress, b: Progress) => {

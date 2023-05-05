@@ -42,8 +42,9 @@ function CompanyBar(props: Props): JSX.Element {
           <View style={styles.progressBrief}>
             <Text style={styles.companyName}>{progress.companyName}</Text>
             <Text>
-              {EventNameMap[progressReversedEvents[0].progressStatus]}
-              {progressReversedEvents[0].progressStatus}
+              {progressReversedEvents[0] &&
+                EventNameMap[progressReversedEvents[0].progressStatus]}
+              {progressReversedEvents[0]?.progressStatus}
             </Text>
             <AntDesign name="down-square-o" size={32} />
           </View>
@@ -81,6 +82,11 @@ function CompanyBar(props: Props): JSX.Element {
                 </Text>
               </View>
             ))}
+            {progressReversedEvents?.length === 0 && (
+              <View style={styles.eventBrief}>
+                <Text>{'还没有更新任何事件哦，去更新->'}</Text>
+              </View>
+            )}
           </View>
         )}
       </View>
