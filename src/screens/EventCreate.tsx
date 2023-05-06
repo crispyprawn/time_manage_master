@@ -18,18 +18,15 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {EventWithCompany, Progress} from '../types/progress';
-import {
-  Tabs,
-  PickerView,
-  Picker,
-  InputItem,
-  Toast,
-} from '@ant-design/react-native';
+import {Tabs, PickerView, InputItem, Toast} from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {ProgressStatus} from '../constants/progress';
+import {EventNameMap, ProgressStatus} from '../constants/progress';
 import {useSettingsStore} from '../hooks/useSettingsStore';
 import {useUserDataStore} from '../hooks/useUserDataStore';
+import TextAreaItem from '@ant-design/react-native/lib/textarea-item';
+import {Picker} from '@react-native-picker/picker';
+import DatePicker from 'react-native-date-picker'
 type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
@@ -99,6 +96,14 @@ function EventCreate(): JSX.Element {
     navigation.goBack();
   };
 
+  const latestStatus =
+    userData
+      .find(progress => progress.progressID === form.progressID)
+      ?.events.slice()
+      .reverse()[0].progressStatus || -1;
+  const progressOptions: ProgressStatus[] = Object.values(
+    ProgressStatus,
+  ).filter(status => typeof status === 'number' && status > latestStatus);
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={styles.topTabs}>
@@ -115,46 +120,52 @@ function EventCreate(): JSX.Element {
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>公司</Text>
           <Picker
-            // value={[form?.progressID]}
-            // onChange={(value: string) => {
-            //   setForm({
-            //     ...form,
-            //     progressID: value,
-            //   });
-            // }}
-            data={userData.map(progress => ({
-              label: progress.companyName,
-              value: progress.progressID,
-            }))}
-            // cascade={false}
-          />
+            selectedValue={form?.progressID}
+            onValueChange={(value: string) => {
+              setForm({
+                ...form,
+                progressID: value,
+              });
+            }}>
+            {userData.map(progress => (
+              <Picker.Item
+                style={styles.companyOption}
+                label={progress.companyName}
+                value={progress.progressID}
+                key={progress.progressID}
+              />
+            ))}
+          </Picker>
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>事件状态</Text>
-          {/* <PickerView
-            value={[form?.progressStatus]}
-            onChange={(value: ProgressStatus) => {
+          <Picker
+            enabled={form.progressID?.length > 0}
+            selectedValue={form?.progressStatus}
+            onValueChange={(value: ProgressStatus) => {
               setForm({
                 ...form,
                 progressStatus: value,
               });
-            }}
-            data={userData.map(progress => ({
-              label: progress.companyName,
-              value: progress.progressID,
-            }))}
-            cascade={false}
-          /> */}
+            }}>
+            {progressOptions.map(option => (
+              <Picker.Item
+                style={styles.companyOption}
+                label={EventNameMap[option]}
+                value={option}
+                key={option}
+              />
+            ))}
+          </Picker>
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>时间</Text>
-          <Switch
-            style={styles.switch}
-            value={form?.calendarSubscribed}
-            onValueChange={(value: boolean) => {
+          <DatePicker
+            date={new Date(form?.eventTime)}
+            onDateChange={(value: Date) => {
               setForm({
                 ...form,
-                calendarSubscribed: value,
+                eventTime: value.valueOf(),
               });
             }}
           />
@@ -174,13 +185,14 @@ function EventCreate(): JSX.Element {
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>面经/备注</Text>
-          <Switch
-            style={styles.switch}
-            value={form?.calendarSubscribed}
-            onValueChange={(value: boolean) => {
+          <TextAreaItem
+            value={form?.experience}
+            placeholder="人人为我，我为人人"
+            rows={6}
+            onChange={value => {
               setForm({
                 ...form,
-                calendarSubscribed: value,
+                experience: value,
               });
             }}
           />
@@ -222,6 +234,10 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 0,
     lineHeight: 40,
+  },
+  companyOption: {
+    fontSize: 24,
+    height: 40,
   },
   switch: {
     // backgroundColor: 'blue',
