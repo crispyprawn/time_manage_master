@@ -11,11 +11,15 @@ import {
 
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 import {EventNameMap, ProgressStatus} from '../constants/progress';
 import dayjs from 'dayjs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import {Progress} from '../types/progress';
+import {Modal} from '@ant-design/react-native';
+import {useUserDataStore} from '../hooks/useUserDataStore';
 type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
@@ -31,12 +35,28 @@ function CompanyBar(props: Props): JSX.Element {
   const progressReversedEvents = progress.events.slice().reverse();
 
   const [showDetail, setShowDetail] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const subscribe = useUserDataStore(state => state.subscribe);
+  const unsubscribe = useUserDataStore(state => state.unsubscribe);
+  const footerButtons = [
+    {text: '创建进程', onPress: () => navigation.navigate('ProgressCreate')},
+    {text: '更新进程', onPress: () => navigation.navigate('EventCreate')},
+  ];
 
   return (
-    <TouchableOpacity
-      style={styles.companyBar}
-      onPress={() => setShowDetail(!showDetail)}
-      key={progress.progressID}>
+    <View style={styles.companyBar} key={progress.progressID}>
+      <Modal
+        title="选择想要的操作"
+        transparent
+        onClose={() => setVisible(false)}
+        maskClosable
+        visible={visible}
+        footer={footerButtons}>
+        <View style={styles.info}>
+          <Text>点“编辑进程”，可以修改公司名称</Text>
+          <Text>点“更新进程”，可以在这个公司进程上添加新事件</Text>
+        </View>
+      </Modal>
       <View style={styles.progressEntry}>
         {!showDetail && (
           <View style={styles.progressBrief}>
@@ -46,7 +66,9 @@ function CompanyBar(props: Props): JSX.Element {
                 EventNameMap[progressReversedEvents[0].progressStatus]}
               {progressReversedEvents[0]?.progressStatus}
             </Text>
-            <AntDesign name="down-square-o" size={32} />
+            <TouchableOpacity onPress={() => setShowDetail(true)}>
+              <AntDesign name="down-square-o" size={32} />
+            </TouchableOpacity>
           </View>
         )}
         {showDetail && (
@@ -54,12 +76,16 @@ function CompanyBar(props: Props): JSX.Element {
             <View style={styles.progressTitle}>
               <View style={styles.companyNameDetail}>
                 <Text style={styles.companyName}>{progress.companyName}</Text>
-                <View style={styles.companyAction}>
-                  <AntDesign name="edit" size={24} />
-                </View>
               </View>
               <View style={styles.companyAction}>
-                <AntDesign name="up-square-o" size={32} />
+                <Feather
+                  name="edit"
+                  size={30}
+                  onPress={() => setVisible(true)}
+                />
+                <TouchableOpacity onPress={() => setShowDetail(false)}>
+                  <AntDesign name="up-square-o" size={32} />
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.progressTimeInfo}>
@@ -74,23 +100,48 @@ function CompanyBar(props: Props): JSX.Element {
             </View>
             {progressReversedEvents.map(event => (
               <View style={styles.eventBrief} key={event.progressStatus}>
-                <Text>
+                <Text style={styles.eventDetail}>
                   {EventNameMap[event.progressStatus]}
                   {event.progressStatus}
                   {'    '}
                   {dayjs(event.eventTime).format('MM-DD HH:mm')}
                 </Text>
+                {event.calendarSubscribed && (
+                  <Feather
+                    name="bell"
+                    size={24}
+                    onPress={() =>
+                      unsubscribe(progress.progressID, event.eventID)
+                    }
+                  />
+                )}
+                {!event.calendarSubscribed && (
+                  <Feather
+                    name="bell-off"
+                    size={24}
+                    onPress={() =>
+                      subscribe(progress.progressID, event.eventID)
+                    }
+                  />
+                )}
               </View>
             ))}
             {progressReversedEvents?.length === 0 && (
               <View style={styles.eventBrief}>
-                <Text>{'还没有更新任何事件哦，去更新->'}</Text>
+                <Text style={styles.eventDetail}>
+                  {'还没有添加任何事件哦，去添加->'}
+                </Text>
+                <FontAwesome
+                  name="plus-circle"
+                  size={32}
+                  onPress={() => navigation.navigate('EventCreate')}
+                />
               </View>
             )}
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -111,7 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   progressDetail: {
-    backgroundColor: 'pink',
+    // backgroundColor: 'pink',
   },
   progressTitle: {
     height: 40,
@@ -127,9 +178,14 @@ const styles = StyleSheet.create({
   },
   eventBrief: {
     height: 40,
-    justifyContent: 'center',
+    paddingRight: 4,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
-  eventDetail: {},
+  eventDetail: {
+    fontSize: 18,
+  },
   companyName: {
     width: 100,
     height: 40,
@@ -138,10 +194,20 @@ const styles = StyleSheet.create({
   },
   companyNameDetail: {
     flexDirection: 'row',
-    backgroundColor: '#f8bc31',
+    backgroundColor: 'pink',
   },
   companyAction: {
-    justifyContent: 'center',
+    width: 90,
+    marginVertical: 2,
+    marginRight: -9,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    borderRadius: 16,
+    backgroundColor: '#f8bc31',
+  },
+  info: {
+    paddingVertical: 10,
   },
 });
 

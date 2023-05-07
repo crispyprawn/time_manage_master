@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, memo, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -13,6 +13,8 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Octicons from 'react-native-vector-icons/Octicons';
+import Feather from 'react-native-vector-icons/Feather';
 import {homeProgresses} from '../mock/mock-data';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
@@ -52,6 +54,7 @@ function Index(): JSX.Element {
     {text: '创建进程', onPress: () => navigation.navigate('ProgressCreate')},
     {text: '更新进程', onPress: () => navigation.navigate('EventCreate')},
   ];
+
   return (
     <SafeAreaView style={backgroundStyle}>
       <Modal
@@ -74,16 +77,16 @@ function Index(): JSX.Element {
         />
         <View style={styles.modeSwitcher}>
           <TouchableOpacity>
-            <AntDesign
-              name="home"
+            <Octicons
+              name="organization"
               size={30}
               onPress={() => setCurrentTab('company')}
             />
           </TouchableOpacity>
           <TouchableOpacity>
-            <AntDesign
-              name="clockcircleo"
-              size={28}
+            <Feather
+              name="calendar"
+              size={32}
               onPress={() => setCurrentTab('event')}
             />
           </TouchableOpacity>

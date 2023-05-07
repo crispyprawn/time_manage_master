@@ -10,7 +10,6 @@ import {
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useNavigation} from '@react-navigation/native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
 import CompanyBar from '../components/CompanyBar';
@@ -20,7 +19,7 @@ type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
 >;
-
+type CompanySortConditions = 'name' | 'create' | 'update' | 'status'
 interface Props {
   database: Progress[];
 }
@@ -30,18 +29,9 @@ function CompanyView(props: Props): JSX.Element {
   const navigation = useNavigation<IndexScreenNavigationProp>();
   const {database} = props;
 
-  const [data, setData] = useState(database);
+  const [condition, setCondition] = useState<CompanySortConditions>('name');
 
-  const handleRearrange =
-    (sortBy: 'name' | 'create' | 'update' | 'status') => () => {
-      setData(prevData => {
-        let dataCopy = prevData.slice();
-        dataCopy.sort(comparer(sortBy));
-        return dataCopy;
-      });
-    };
-
-  const comparer = (sortBy: 'name' | 'create' | 'update' | 'status') => {
+  const comparer = (sortBy: CompanySortConditions) => {
     switch (sortBy) {
       case 'name':
         return (a: Progress, b: Progress) => {
@@ -97,23 +87,23 @@ function CompanyView(props: Props): JSX.Element {
   return (
     <View style={styles.companyViewContainer}>
       <View style={styles.sortBy}>
-        <TouchableOpacity onPress={handleRearrange('name')}>
+        <TouchableOpacity onPress={()=>setCondition('name')}>
           <Text>by name</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={handleRearrange('create')}>
+        {/* <TouchableOpacity onPress={()=>setCondition('create')}>
           <Text>by create time</Text>
         </TouchableOpacity> */}
-        <TouchableOpacity onPress={handleRearrange('update')}>
+        <TouchableOpacity onPress={()=>setCondition('update')}>
           <Text>by update time</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleRearrange('status')}>
+        <TouchableOpacity onPress={()=>setCondition('status')}>
           <Text>by event status</Text>
         </TouchableOpacity>
       </View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={styles.companyScrollView}>
-        {data.map(progress => (
+        {database.slice().sort(comparer(condition)).map(progress => (
           <CompanyBar progress={progress} key={progress.progressID} />
         ))}
       </ScrollView>
