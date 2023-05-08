@@ -45,13 +45,13 @@ function ProgressCreate(): JSX.Element {
 
   const handleCreateEvent = () => {
     if (!form?.companyName) {
-      Toast.fail({
+      Toast.info({
         content: '请先输入公司名字',
       });
       return;
     }
+    const now = dayjs().valueOf();
     if (createDeliverResume) {
-      const now = dayjs().valueOf();
       setUserData(
         userData?.concat([
           {
@@ -62,8 +62,10 @@ function ProgressCreate(): JSX.Element {
             events: [
               {
                 progressStatus: ProgressStatus.DELIVER_RESUME,
-                eventTime: now,
+                startTime: now,
+                endTime: now,
                 calendarSubscribed: false,
+                calendarEventID: '',
                 eventID: nanoid(),
               },
             ],
@@ -75,8 +77,8 @@ function ProgressCreate(): JSX.Element {
         userData?.concat([
           {
             ...form,
-            createTime: dayjs().valueOf(),
-            updateTime: dayjs().valueOf(),
+            createTime: now,
+            updateTime: now,
             progressID: nanoid(),
             events: [],
           },

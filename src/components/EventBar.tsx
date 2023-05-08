@@ -40,7 +40,7 @@ function EventBar(props: Props): JSX.Element {
         {!showDetail && (
           <View style={styles.progressBrief}>
             <Text style={styles.companyName}>{event.companyName}</Text>
-            <Text>{dayjs(event.eventTime).format('MM-DD HH:mm')}</Text>
+            <Text>{dayjs(event.startTime).format('MM-DD HH:mm')}</Text>
             <AntDesign name="down-square-o" size={32} />
           </View>
         )}
@@ -58,7 +58,8 @@ function EventBar(props: Props): JSX.Element {
               </View>
             </View>
             <View style={styles.progressTimeInfo}>
-              <Text>{dayjs(event.eventTime).format('YYYY-MM-DD HH:mm')}</Text>
+              <Text>{dayjs(event.startTime).format('YYYY-MM-DD HH:mm')}</Text>
+              <Text>{dayjs(event.endTime).format('YYYY-MM-DD HH:mm')}</Text>
             </View>
           </View>
         )}

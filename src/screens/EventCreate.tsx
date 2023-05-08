@@ -21,12 +21,17 @@ import {EventWithCompany, Progress} from '../types/progress';
 import {Tabs, PickerView, InputItem, Toast} from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {EventNameMap, ProgressStatus} from '../constants/progress';
+import {
+  EventNameMap,
+  ProgressStatus,
+  ProgressStatusKey,
+  ProgressStatusList,
+} from '../constants/progress';
 import {useSettingsStore} from '../hooks/useSettingsStore';
 import {useUserDataStore} from '../hooks/useUserDataStore';
 import TextAreaItem from '@ant-design/react-native/lib/textarea-item';
 import {Picker} from '@react-native-picker/picker';
-import DatePicker from 'react-native-date-picker'
+import DatePicker from 'react-native-date-picker';
 type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
@@ -43,37 +48,41 @@ function EventCreate(): JSX.Element {
 
   const userData = useUserDataStore(state => state.bears);
   const setUserData = useUserDataStore(state => state.setData);
-  const now = dayjs().valueOf();
+  const subscribe = useUserDataStore(state => state.subscribe);
+  const now = dayjs();
   const [form, setForm] = useState<
     Omit<EventWithCompany, 'companyName' | 'eventID'>
   >({
     progressStatus: ProgressStatus.OFFER_CALL,
-    eventTime: now,
+    startTime: now.valueOf(),
+    endTime: now.add(1, 'hour').valueOf(),
     calendarSubscribed: false,
+    calendarEventID: '',
     experience: '',
-    progressID: '',
+    progressID: userData[0]?.progressID,
   });
 
-  const handleCreateEvent = () => {
+  const handleCreateEvent = async () => {
     if (!form?.progressID) {
-      Toast.fail({
+      Toast.info({
         content: '请先选择已有公司进程',
       });
       return;
     }
-    if (!form?.eventTime) {
-      Toast.fail({
-        content: '请先选择该事件的时间',
+    if (!form?.startTime || !form?.endTime || form?.startTime > form?.endTime) {
+      Toast.info({
+        content: '请正确选择该事件的起止时间',
       });
       return;
     }
     if (!form?.progressStatus) {
-      Toast.fail({
+      Toast.info({
         content: '请先选择该事件的状态',
       });
       return;
     }
-    setUserData(
+    const newEventID = nanoid();
+    await setUserData(
       userData.map(progress => {
         if (progress.progressID !== form.progressID) {
           return progress;
@@ -82,7 +91,7 @@ function EventCreate(): JSX.Element {
             ...progress,
             events: progress.events.concat([
               {
-                eventID: nanoid(),
+                eventID: newEventID,
                 ...form,
               },
             ]),
@@ -91,7 +100,7 @@ function EventCreate(): JSX.Element {
       }),
     );
     if (form.calendarSubscribed) {
-    } else {
+      await subscribe(form.progressID, newEventID);
     }
     navigation.goBack();
   };
@@ -101,9 +110,9 @@ function EventCreate(): JSX.Element {
       .find(progress => progress.progressID === form.progressID)
       ?.events.slice()
       .reverse()[0].progressStatus || -1;
-  const progressOptions: ProgressStatus[] = Object.values(
-    ProgressStatus,
-  ).filter(status => typeof status === 'number' && status > latestStatus);
+  const progressOptions: ProgressStatus[] = ProgressStatusList.filter(
+    status => status > latestStatus,
+  );
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={styles.topTabs}>
@@ -120,7 +129,7 @@ function EventCreate(): JSX.Element {
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>公司</Text>
           <Picker
-            selectedValue={form?.progressID}
+            selectedValue={form.progressID}
             onValueChange={(value: string) => {
               setForm({
                 ...form,
@@ -159,19 +168,32 @@ function EventCreate(): JSX.Element {
           </Picker>
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.inputPrefix}>时间</Text>
+          <Text style={styles.inputPrefix}>开始时间</Text>
           <DatePicker
-            date={new Date(form?.eventTime)}
+            date={new Date(form?.startTime)}
+            onDateChange={(value: Date) => {
+              setForm(prev => ({
+                ...prev,
+                startTime: value.valueOf(),
+                endTime: value.valueOf() + prev.endTime - prev.startTime,
+              }));
+            }}
+          />
+        </View>
+        <View style={styles.inputWrapper}>
+          <Text style={styles.inputPrefix}>结束时间</Text>
+          <DatePicker
+            date={new Date(form?.endTime)}
             onDateChange={(value: Date) => {
               setForm({
                 ...form,
-                eventTime: value.valueOf(),
+                endTime: value.valueOf(),
               });
             }}
           />
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.inputPrefix}>订阅该事件到日历并设置闹钟</Text>
+          <Text style={styles.inputPrefix}>添加该事件到日历并设置闹钟</Text>
           <Switch
             style={styles.switch}
             value={form?.calendarSubscribed}

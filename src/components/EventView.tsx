@@ -45,7 +45,8 @@ function EventView(props: Props): JSX.Element {
         progressID: progress.progressID,
       })),
     }))
-    .flatMap(progress => progress.events);
+    .flatMap(progress => progress.events)
+    .sort((a, b) => b.startTime - a.startTime);
 
   return (
     <View>

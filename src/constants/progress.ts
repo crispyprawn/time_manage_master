@@ -9,6 +9,19 @@ export enum ProgressStatus {
   OFFER_CALL = 8,
 }
 
+export type ProgressStatusKey = keyof typeof ProgressStatus;
+
+export const ProgressStatusList = [
+  ProgressStatus.DELIVER_RESUME,
+  ProgressStatus.ASSESSMENT,
+  ProgressStatus.WRITTEN_INTERVIEW,
+  ProgressStatus.FACE_INTERVIEW_1,
+  ProgressStatus.FACE_INTERVIEW_2,
+  ProgressStatus.FACE_INTERVIEW_3,
+  ProgressStatus.FACE_INTERVIEW_HR,
+  ProgressStatus.OFFER_CALL,
+];
+
 export const EventNameMap = {
   [ProgressStatus.DELIVER_RESUME]: '投递简历',
   [ProgressStatus.ASSESSMENT]: '职业测评',

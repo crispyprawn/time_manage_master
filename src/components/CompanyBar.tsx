@@ -102,27 +102,30 @@ function CompanyBar(props: Props): JSX.Element {
               <View style={styles.eventBrief} key={event.progressStatus}>
                 <Text style={styles.eventDetail}>
                   {EventNameMap[event.progressStatus]}
-                  {event.progressStatus}
                   {'    '}
-                  {dayjs(event.eventTime).format('MM-DD HH:mm')}
+                  {dayjs(event.startTime).format('MM-DD HH:mm')}
                 </Text>
                 {event.calendarSubscribed && (
-                  <Feather
-                    name="bell"
-                    size={24}
-                    onPress={() =>
-                      unsubscribe(progress.progressID, event.eventID)
-                    }
-                  />
+                  <TouchableOpacity>
+                    <Feather
+                      name="bell"
+                      size={24}
+                      onPress={() =>
+                        unsubscribe(progress.progressID, event.eventID)
+                      }
+                    />
+                  </TouchableOpacity>
                 )}
                 {!event.calendarSubscribed && (
-                  <Feather
-                    name="bell-off"
-                    size={24}
-                    onPress={() =>
-                      subscribe(progress.progressID, event.eventID)
-                    }
-                  />
+                  <TouchableOpacity>
+                    <Feather
+                      name="bell-off"
+                      size={24}
+                      onPress={() =>
+                        subscribe(progress.progressID, event.eventID)
+                      }
+                    />
+                  </TouchableOpacity>
                 )}
               </View>
             ))}
