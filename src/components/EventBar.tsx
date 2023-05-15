@@ -11,7 +11,7 @@ import {
 
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {EventNameMap, ProgressStatus} from '../constants/progress';
+import {EventNameMap, ProgressStage} from '../constants/progress';
 import dayjs from 'dayjs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';

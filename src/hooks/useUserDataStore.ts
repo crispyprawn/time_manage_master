@@ -8,7 +8,7 @@ import {EventNameMap} from '../constants/progress';
 export const useUserDataStore = create<{
   bears: Progress[];
   getData: () => Promise<any>;
-  setData: (value: any) => Promise<any>;
+  setData: (value: Progress[]) => Promise<any>;
   subscribe: (progressID: string, eventID: string) => Promise<any>;
   unsubscribe: (progressID: string, eventID: string) => Promise<any>;
   setEventSubscribed: (
@@ -32,7 +32,7 @@ export const useUserDataStore = create<{
       return null;
     }
   },
-  setData: async (value: any) => {
+  setData: async (value: Progress[]) => {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem('userData', jsonValue);
@@ -66,7 +66,7 @@ export const useUserDataStore = create<{
       try {
         const savedEventID = await RNCalendarEvents.saveEvent(
           `${progressSelected.companyName}-${
-            EventNameMap[eventSelected.progressStatus]
+            EventNameMap[eventSelected.progressStage]
           }`,
           {
             alarms: [{date: 0}],
@@ -105,7 +105,7 @@ export const useUserDataStore = create<{
     const eventSelected = progressSelected?.events.find(
       event => event.eventID === eventID,
     );
-    if (progressSelected && eventSelected) {
+    if (progressSelected && eventSelected?.calendarEventID) {
       try {
         const checkEventStillExist = await RNCalendarEvents.findEventById(
           eventSelected.calendarEventID,
@@ -115,13 +115,16 @@ export const useUserDataStore = create<{
             eventSelected.calendarEventID,
           );
           if (removeSucceeded) {
-            await get().setEventSubscribed(progressID, eventID, false, '');
+            Toast.info('已经从系统日历中移除该事件');
           }
+        } else {
+          Toast.info('您可能已经自己删掉该事件了哦');
         }
       } catch (err) {
         console.log(err);
       }
     }
+    await get().setEventSubscribed(progressID, eventID, false, '');
   },
   setEventSubscribed: async (
     progressID: string,

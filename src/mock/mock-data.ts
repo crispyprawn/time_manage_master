@@ -1,4 +1,4 @@
-import {ProgressStatus} from '../constants/progress';
+import {ProgressStage} from '../constants/progress';
 import {Progress} from '../types/progress';
 
 export const homeProgresses: Progress[] = [
@@ -9,14 +9,14 @@ export const homeProgresses: Progress[] = [
     updateTime: 1682359526000,
     events: [
       {
-        progressStatus: ProgressStatus.DELIVER_RESUME,
+        progressStage: ProgressStage.DELIVER_RESUME,
         startTime: 1680055200000,
         endTime: 1680058600000,
         calendarSubscribed: false,
         eventID: 'D7SNktFbc2D2lElKhPXSX',
       },
       {
-        progressStatus: ProgressStatus.ASSESSMENT,
+        progressStage: ProgressStage.ASSESSMENT,
         startTime: 1680141600000,
         endTime: 1680145200000,
         calendarSubscribed: false,
@@ -31,21 +31,21 @@ export const homeProgresses: Progress[] = [
     updateTime: 1682459526000,
     events: [
       {
-        progressStatus: ProgressStatus.DELIVER_RESUME,
+        progressStage: ProgressStage.DELIVER_RESUME,
         startTime: 1680045200000,
         endTime: 1680048600000,
         calendarSubscribed: false,
         eventID: 'mJKXvggmc7cjdfP-3ngtS',
       },
       {
-        progressStatus: ProgressStatus.ASSESSMENT,
+        progressStage: ProgressStage.ASSESSMENT,
         startTime: 1680041600000,
         endTime: 1680045200000,
         calendarSubscribed: false,
         eventID: 'brp9Re8x3OKj4P6qNx4Ic',
       },
       {
-        progressStatus: ProgressStatus.WRITTEN_INTERVIEW,
+        progressStage: ProgressStage.WRITTEN_INTERVIEW,
         startTime: 1680131600000,
         endTime: 1680135200000,
         calendarSubscribed: false,
@@ -60,28 +60,28 @@ export const homeProgresses: Progress[] = [
     updateTime: 1682059526000,
     events: [
       {
-        progressStatus: ProgressStatus.DELIVER_RESUME,
+        progressStage: ProgressStage.DELIVER_RESUME,
         startTime: 1680054200000,
         endTime: 1680054860000,
         calendarSubscribed: false,
         eventID: 'TcRlGHMP4-3ntXAFXMIYU',
       },
       {
-        progressStatus: ProgressStatus.ASSESSMENT,
+        progressStage: ProgressStage.ASSESSMENT,
         startTime: 1680141600000,
         endTime: 1680143600000,
         calendarSubscribed: false,
         eventID: 'mGzHoWE9Q3Hhp0MFcPthf',
       },
       {
-        progressStatus: ProgressStatus.WRITTEN_INTERVIEW,
+        progressStage: ProgressStage.WRITTEN_INTERVIEW,
         startTime: 1680144600000,
         endTime: 1680145600000,
         calendarSubscribed: false,
         eventID: 'nS8tKrxMDws-Vk1fOdu85',
       },
       {
-        progressStatus: ProgressStatus.FACE_INTERVIEW_1,
+        progressStage: ProgressStage.FACE_INTERVIEW_1,
         startTime: 1680153600000,
         endTime: 1680154600000,
         calendarSubscribed: false,
@@ -96,35 +96,35 @@ export const homeProgresses: Progress[] = [
     updateTime: 1683259526000,
     events: [
       {
-        progressStatus: ProgressStatus.DELIVER_RESUME,
+        progressStage: ProgressStage.DELIVER_RESUME,
         startTime: 1680055200000,
         endTime: 1680058200000,
         calendarSubscribed: false,
         eventID: 'ogDQM7Wa5I1jFeXnI8yGl',
       },
       {
-        progressStatus: ProgressStatus.ASSESSMENT,
+        progressStage: ProgressStage.ASSESSMENT,
         startTime: 1680147600000,
         endTime: 1680148600000,
         calendarSubscribed: false,
         eventID: 'Tp77C9Lu0-lWHtc4Sjm3m',
       },
       {
-        progressStatus: ProgressStatus.WRITTEN_INTERVIEW,
+        progressStage: ProgressStage.WRITTEN_INTERVIEW,
         startTime: 1680157600000,
         endTime: 1680158600000,
         calendarSubscribed: false,
         eventID: 'zqQoFpaJZ473LfmoZzUEP',
       },
       {
-        progressStatus: ProgressStatus.FACE_INTERVIEW_1,
+        progressStage: ProgressStage.FACE_INTERVIEW_1,
         startTime: 1680167600000,
         endTime: 1680168600000,
         calendarSubscribed: false,
         eventID: 'ZnEuShEBpz829Xq_UWoD0',
       },
       {
-        progressStatus: ProgressStatus.FACE_INTERVIEW_2,
+        progressStage: ProgressStage.FACE_INTERVIEW_2,
         startTime: 1680177600000,
         endTime: 1680147800000,
         calendarSubscribed: false,
@@ -139,35 +139,35 @@ export const homeProgresses: Progress[] = [
     updateTime: 1684259526000,
     events: [
       {
-        progressStatus: ProgressStatus.DELIVER_RESUME,
+        progressStage: ProgressStage.DELIVER_RESUME,
         startTime: 1682055200000,
         endTime: 1682055200000,
         calendarSubscribed: false,
         eventID: 'KkUjKWdnS7kwQrhZ-1Vxd',
       },
       {
-        progressStatus: ProgressStatus.ASSESSMENT,
+        progressStage: ProgressStage.ASSESSMENT,
         startTime: 1682301600000,
         endTime: 1682304600000,
         calendarSubscribed: false,
         eventID: 'ndO3eq4LdGDGmZvp1E2KL',
       },
       {
-        progressStatus: ProgressStatus.WRITTEN_INTERVIEW,
+        progressStage: ProgressStage.WRITTEN_INTERVIEW,
         startTime: 1683141600000,
         endTime: 1683144600000,
         calendarSubscribed: false,
         eventID: '6pWbGlmqwIN--CHoGu6dv',
       },
       {
-        progressStatus: ProgressStatus.FACE_INTERVIEW_1,
+        progressStage: ProgressStage.FACE_INTERVIEW_1,
         startTime: 1683241600000,
         endTime: 1683244600000,
         calendarSubscribed: false,
         eventID: 'u5OwyPdgkw3AV6KqI0o19',
       },
       {
-        progressStatus: ProgressStatus.FACE_INTERVIEW_2,
+        progressStage: ProgressStage.FACE_INTERVIEW_2,
         startTime: 1683341600000,
         endTime: 1683344600000,
         calendarSubscribed: false,

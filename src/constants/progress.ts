@@ -1,4 +1,4 @@
-export enum ProgressStatus {
+export enum ProgressStage {
   DELIVER_RESUME = 1,
   ASSESSMENT = 2,
   WRITTEN_INTERVIEW = 3,
@@ -9,26 +9,38 @@ export enum ProgressStatus {
   OFFER_CALL = 8,
 }
 
-export type ProgressStatusKey = keyof typeof ProgressStatus;
+export enum ProgressStatus {
+  PENDING = 1,
+  SUCCESS = 2,
+  FAILURE = 3,
+}
 
 export const ProgressStatusList = [
-  ProgressStatus.DELIVER_RESUME,
-  ProgressStatus.ASSESSMENT,
-  ProgressStatus.WRITTEN_INTERVIEW,
-  ProgressStatus.FACE_INTERVIEW_1,
-  ProgressStatus.FACE_INTERVIEW_2,
-  ProgressStatus.FACE_INTERVIEW_3,
-  ProgressStatus.FACE_INTERVIEW_HR,
-  ProgressStatus.OFFER_CALL,
+  ProgressStatus.PENDING,
+  ProgressStatus.SUCCESS,
+  ProgressStatus.FAILURE,
+];
+
+export type ProgressStageKey = keyof typeof ProgressStage;
+
+export const ProgressStageList = [
+  ProgressStage.DELIVER_RESUME,
+  ProgressStage.ASSESSMENT,
+  ProgressStage.WRITTEN_INTERVIEW,
+  ProgressStage.FACE_INTERVIEW_1,
+  ProgressStage.FACE_INTERVIEW_2,
+  ProgressStage.FACE_INTERVIEW_3,
+  ProgressStage.FACE_INTERVIEW_HR,
+  ProgressStage.OFFER_CALL,
 ];
 
 export const EventNameMap = {
-  [ProgressStatus.DELIVER_RESUME]: '投递简历',
-  [ProgressStatus.ASSESSMENT]: '职业测评',
-  [ProgressStatus.WRITTEN_INTERVIEW]: '笔试',
-  [ProgressStatus.FACE_INTERVIEW_1]: '一面',
-  [ProgressStatus.FACE_INTERVIEW_2]: '二面',
-  [ProgressStatus.FACE_INTERVIEW_3]: '三面',
-  [ProgressStatus.FACE_INTERVIEW_HR]: 'HR面',
-  [ProgressStatus.OFFER_CALL]: 'oc',
+  [ProgressStage.DELIVER_RESUME]: '投递简历',
+  [ProgressStage.ASSESSMENT]: '职业测评',
+  [ProgressStage.WRITTEN_INTERVIEW]: '笔试',
+  [ProgressStage.FACE_INTERVIEW_1]: '一面',
+  [ProgressStage.FACE_INTERVIEW_2]: '二面',
+  [ProgressStage.FACE_INTERVIEW_3]: '三面',
+  [ProgressStage.FACE_INTERVIEW_HR]: 'HR面',
+  [ProgressStage.OFFER_CALL]: 'oc',
 };

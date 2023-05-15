@@ -1,4 +1,4 @@
-import {ProgressStatus} from '../constants/progress';
+import {ProgressStage, ProgressStatus} from '../constants/progress';
 
 export interface Progress {
   companyName: string;
@@ -6,10 +6,11 @@ export interface Progress {
   createTime: number;
   updateTime: number;
   events: Event[];
+  status: ProgressStatus;
 }
 
 export interface Event {
-  progressStatus: ProgressStatus;
+  progressStage: ProgressStage;
   eventID: string;
   startTime: number;
   endTime: number;

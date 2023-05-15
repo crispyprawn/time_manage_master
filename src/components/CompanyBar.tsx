@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
-import {EventNameMap, ProgressStatus} from '../constants/progress';
+import {EventNameMap, ProgressStage} from '../constants/progress';
 import dayjs from 'dayjs';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
@@ -39,8 +39,20 @@ function CompanyBar(props: Props): JSX.Element {
   const subscribe = useUserDataStore(state => state.subscribe);
   const unsubscribe = useUserDataStore(state => state.unsubscribe);
   const footerButtons = [
-    {text: '创建进程', onPress: () => navigation.navigate('ProgressCreate')},
-    {text: '更新进程', onPress: () => navigation.navigate('EventCreate')},
+    {
+      text: '编辑进程',
+      onPress: () =>
+        navigation.navigate('ProgressDetail', {
+          progressID: progress.progressID,
+        }),
+    },
+    {
+      text: '更新进程',
+      onPress: () =>
+        navigation.navigate('EventCreate', {
+          progressID: progress.progressID,
+        }),
+    },
   ];
 
   return (
@@ -53,7 +65,7 @@ function CompanyBar(props: Props): JSX.Element {
         visible={visible}
         footer={footerButtons}>
         <View style={styles.info}>
-          <Text>点“编辑进程”，可以修改公司名称</Text>
+          <Text>点“编辑进程”，可以修改公司名称，base等信息</Text>
           <Text>点“更新进程”，可以在这个公司进程上添加新事件</Text>
         </View>
       </Modal>
@@ -63,8 +75,8 @@ function CompanyBar(props: Props): JSX.Element {
             <Text style={styles.companyName}>{progress.companyName}</Text>
             <Text>
               {progressReversedEvents[0] &&
-                EventNameMap[progressReversedEvents[0].progressStatus]}
-              {progressReversedEvents[0]?.progressStatus}
+                EventNameMap[progressReversedEvents[0].progressStage]}
+              {progressReversedEvents[0]?.progressStage}
             </Text>
             <TouchableOpacity onPress={() => setShowDetail(true)}>
               <AntDesign name="down-square-o" size={32} />
@@ -99,9 +111,9 @@ function CompanyBar(props: Props): JSX.Element {
               </Text>
             </View>
             {progressReversedEvents.map(event => (
-              <View style={styles.eventBrief} key={event.progressStatus}>
+              <View style={styles.eventBrief} key={event.progressStage}>
                 <Text style={styles.eventDetail}>
-                  {EventNameMap[event.progressStatus]}
+                  {EventNameMap[event.progressStage]}
                   {'    '}
                   {dayjs(event.startTime).format('MM-DD HH:mm')}
                 </Text>

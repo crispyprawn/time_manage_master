@@ -12,15 +12,14 @@ import type {Settings} from '../types/settings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Progress} from '../types/progress';
 import {defaultSettings} from '../constants/defaultSettings';
-import { useSettingsStore } from '../hooks/useSettingsStore';
-import { useUserDataStore } from '../hooks/useUserDataStore';
+import {useSettingsStore} from '../hooks/useSettingsStore';
+import {useUserDataStore} from '../hooks/useUserDataStore';
 export default function Settings(): JSX.Element {
   const navigation = useNavigation();
   //   const {storage: settings, setStorage: setSettings} =
   //     useStorageByKey<Settings>('settings');
   //   const {storage: userData, setStorage: setUserData} =
   //     useStorageByKey<Progress[]>('userData');
-
 
   const settings = useSettingsStore(state => state.bears);
   const userData = useUserDataStore(state => state.bears);
@@ -72,14 +71,13 @@ export default function Settings(): JSX.Element {
           </WingBlank>
           <WhiteSpace />
           <List.Item>
-            <Text>{JSON.stringify(userData)}</Text>
+            <Text>{JSON.stringify(userData, null, 2)}</Text>
           </List.Item>
           <List.Item>
-            <Text>{JSON.stringify(settings)}</Text>
+            <Text>{JSON.stringify(settings, null, 2)}</Text>
           </List.Item>
         </List>
       )}
     </ScrollView>
   );
 }
-

@@ -21,7 +21,7 @@ import {Progress} from '../types/progress';
 import {Tabs, Carousel, InputItem, Toast} from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-import {ProgressStatus} from '../constants/progress';
+import {ProgressStage, ProgressStatus} from '../constants/progress';
 import {useSettingsStore} from '../hooks/useSettingsStore';
 import {useUserDataStore} from '../hooks/useUserDataStore';
 type IndexScreenNavigationProp = NativeStackNavigationProp<
@@ -59,9 +59,10 @@ function ProgressCreate(): JSX.Element {
             createTime: now,
             updateTime: now,
             progressID: nanoid(),
+            status: ProgressStatus.PENDING,
             events: [
               {
-                progressStatus: ProgressStatus.DELIVER_RESUME,
+                progressStage: ProgressStage.DELIVER_RESUME,
                 startTime: now,
                 endTime: now,
                 calendarSubscribed: false,
@@ -70,7 +71,7 @@ function ProgressCreate(): JSX.Element {
               },
             ],
           },
-        ] as Progress[]),
+        ]),
       );
     } else {
       setUserData(
@@ -80,6 +81,7 @@ function ProgressCreate(): JSX.Element {
             createTime: now,
             updateTime: now,
             progressID: nanoid(),
+            status: ProgressStatus.PENDING,
             events: [],
           },
         ] as Progress[]),

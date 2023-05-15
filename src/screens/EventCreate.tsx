@@ -23,9 +23,9 @@ import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
 import {
   EventNameMap,
-  ProgressStatus,
-  ProgressStatusKey,
-  ProgressStatusList,
+  ProgressStage,
+  ProgressStageKey,
+  ProgressStageList,
 } from '../constants/progress';
 import {useSettingsStore} from '../hooks/useSettingsStore';
 import {useUserDataStore} from '../hooks/useUserDataStore';
@@ -53,7 +53,7 @@ function EventCreate(): JSX.Element {
   const [form, setForm] = useState<
     Omit<EventWithCompany, 'companyName' | 'eventID'>
   >({
-    progressStatus: ProgressStatus.OFFER_CALL,
+    progressStage: ProgressStage.OFFER_CALL,
     startTime: now.valueOf(),
     endTime: now.add(1, 'hour').valueOf(),
     calendarSubscribed: false,
@@ -75,7 +75,7 @@ function EventCreate(): JSX.Element {
       });
       return;
     }
-    if (!form?.progressStatus) {
+    if (!form?.progressStage) {
       Toast.info({
         content: '请先选择该事件的状态',
       });
@@ -105,13 +105,13 @@ function EventCreate(): JSX.Element {
     navigation.goBack();
   };
 
-  const latestStatus =
+  const latestStage =
     userData
       .find(progress => progress.progressID === form.progressID)
       ?.events.slice()
-      .reverse()[0].progressStatus || -1;
-  const progressOptions: ProgressStatus[] = ProgressStatusList.filter(
-    status => status > latestStatus,
+      .reverse()[0].progressStage || -1;
+  const progressOptions: ProgressStage[] = ProgressStageList.filter(
+    stage => stage > latestStage,
   );
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -150,11 +150,11 @@ function EventCreate(): JSX.Element {
           <Text style={styles.inputPrefix}>事件状态</Text>
           <Picker
             enabled={form.progressID?.length > 0}
-            selectedValue={form?.progressStatus}
-            onValueChange={(value: ProgressStatus) => {
+            selectedValue={form?.progressStage}
+            onValueChange={(value: ProgressStage) => {
               setForm({
                 ...form,
-                progressStatus: value,
+                progressStage: value,
               });
             }}>
             {progressOptions.map(option => (
@@ -193,7 +193,7 @@ function EventCreate(): JSX.Element {
           />
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.inputPrefix}>添加该事件到日历并设置闹钟</Text>
+          <Text style={styles.inputPrefix}>添加该事件到日历</Text>
           <Switch
             style={styles.switch}
             value={form?.calendarSubscribed}

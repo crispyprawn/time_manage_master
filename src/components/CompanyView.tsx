@@ -8,29 +8,25 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {useNavigation} from '@react-navigation/native';
-import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../App';
 import CompanyBar from '../components/CompanyBar';
 import {pinyin} from 'pinyin-pro';
 import {Progress} from '../types/progress';
-type IndexScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Home'
->;
-type CompanySortConditions = 'name' | 'create' | 'update' | 'status'
+type CompanySortConditions = 'name' | 'create' | 'update' | 'stage';
 interface Props {
   database: Progress[];
 }
 
 function CompanyView(props: Props): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
-  const navigation = useNavigation<IndexScreenNavigationProp>();
   const {database} = props;
 
-  const [condition, setCondition] = useState<CompanySortConditions>('name');
+  const [condition, setCondition] = useState<CompanySortConditions>('create');
 
+  /**
+   * 目前的设计是新公司进程添加到列表末尾，因此进程存储顺序和按照createTime排序一致
+   * @param sortBy comparer type
+   * @returns compare function as a param for .sort() function
+   */
   const comparer = (sortBy: CompanySortConditions) => {
     switch (sortBy) {
       case 'name':
@@ -55,10 +51,10 @@ function CompanyView(props: Props): JSX.Element {
         return (a: Progress, b: Progress) => a.createTime - b.createTime;
       case 'update':
         return (a: Progress, b: Progress) => a.updateTime - b.updateTime;
-      case 'status':
+      case 'stage':
         return (a: Progress, b: Progress) => {
-          const a1 = a.events.slice().reverse()[0]?.progressStatus;
-          const b1 = b.events.slice().reverse()[0]?.progressStatus;
+          const a1 = a.events.slice().reverse()[0]?.progressStage;
+          const b1 = b.events.slice().reverse()[0]?.progressStage;
           if (a1 && b1) {
             return b1 - a1;
           } else if (a1 && !b1) {
@@ -87,25 +83,36 @@ function CompanyView(props: Props): JSX.Element {
   return (
     <View style={styles.companyViewContainer}>
       <View style={styles.sortBy}>
-        <TouchableOpacity onPress={()=>setCondition('name')}>
+        <TouchableOpacity onPress={() => setCondition('name')}>
           <Text>by name</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={()=>setCondition('create')}>
+        <TouchableOpacity onPress={() => setCondition('create')}>
           <Text>by create time</Text>
-        </TouchableOpacity> */}
-        <TouchableOpacity onPress={()=>setCondition('update')}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setCondition('update')}>
           <Text>by update time</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>setCondition('status')}>
-          <Text>by event status</Text>
+        <TouchableOpacity onPress={() => setCondition('stage')}>
+          <Text>by event stage</Text>
         </TouchableOpacity>
       </View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={styles.companyScrollView}>
-        {database.slice().sort(comparer(condition)).map(progress => (
-          <CompanyBar progress={progress} key={progress.progressID} />
-        ))}
+        {condition !== 'create' &&
+          database
+            .slice()
+            .sort(comparer(condition))
+            .map(progress => (
+              <CompanyBar progress={progress} key={progress.progressID} />
+            ))}
+        {condition === 'create' &&
+          database
+            .slice()
+            .reverse()
+            .map(progress => (
+              <CompanyBar progress={progress} key={progress.progressID} />
+            ))}
       </ScrollView>
     </View>
   );

@@ -23,7 +23,6 @@ import CompanyView from '../components/CompanyView';
 import EventView from '../components/EventView';
 import {Modal} from '@ant-design/react-native';
 import {useIsFocused} from '@react-navigation/native';
-import {Settings} from '../types/settings';
 import {useSettingsStore} from '../hooks/useSettingsStore';
 import {useUserDataStore} from '../hooks/useUserDataStore';
 type IndexScreenNavigationProp = NativeStackNavigationProp<
@@ -35,7 +34,6 @@ type IndexTab = 'company' | 'event';
 function Index(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const navigation = useNavigation<IndexScreenNavigationProp>();
-  const isFocuesd = useIsFocused();
 
   const settings = useSettingsStore(state => state.bears);
   const userData = useUserDataStore(state => state.bears);
@@ -97,10 +95,17 @@ function Index(): JSX.Element {
           onPress={() => setVisible(true)}
         />
       </View>
-      {database.length > 0 && isFocuesd && (
+      {database.length > 0 && (
         <View style={styles.tabContents}>
           {currentTab === 'company' && <CompanyView database={database} />}
           {currentTab === 'event' && <EventView database={database} />}
+        </View>
+      )}
+      {database.length === 0 && (
+        <View style={styles.tabContents}>
+          <Text style={styles.tabEmptyHint}>
+            点右上角加号，去添加第一个求职进程吧
+          </Text>
         </View>
       )}
     </SafeAreaView>
@@ -139,6 +144,10 @@ const styles = StyleSheet.create({
   },
   tabContents: {
     flex: 1,
+  },
+  tabEmptyHint: {
+    fontSize: 20,
+    top: '40%',
   },
   info: {
     paddingVertical: 10,

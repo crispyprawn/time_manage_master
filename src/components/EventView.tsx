@@ -13,7 +13,7 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {useNavigation} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {EventNameMap, ProgressStatus} from '../constants/progress';
+import {EventNameMap, ProgressStage} from '../constants/progress';
 import dayjs from 'dayjs';
 import {homeProgresses} from '../mock/mock-data';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
