@@ -111,7 +111,15 @@ function CompanyBar(props: Props): JSX.Element {
               </Text>
             </View>
             {progressReversedEvents.map(event => (
-              <View style={styles.eventBrief} key={event.progressStage}>
+              <TouchableOpacity
+                style={styles.eventBrief}
+                key={event.progressStage}
+                onPress={() => {
+                  navigation.navigate('EventDetail', {
+                    progressID: progress.progressID,
+                    eventID: event.eventID,
+                  });
+                }}>
                 <Text style={styles.eventDetail}>
                   {EventNameMap[event.progressStage]}
                   {'    '}
@@ -139,7 +147,7 @@ function CompanyBar(props: Props): JSX.Element {
                     />
                   </TouchableOpacity>
                 )}
-              </View>
+              </TouchableOpacity>
             ))}
             {progressReversedEvents?.length === 0 && (
               <View style={styles.eventBrief}>

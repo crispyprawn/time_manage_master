@@ -13,11 +13,11 @@ import {
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../App';
-import {EventWithCompany, Progress} from '../types/progress';
+import {Event, EventWithCompany, Progress} from '../types/progress';
 import {Tabs, PickerView, InputItem, Toast} from '@ant-design/react-native';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
@@ -36,10 +36,12 @@ type IndexScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Home'
 >;
+type IndexScreenRouteProp = RouteProp<RootStackParamList, 'EventDetail'>;
 
 function EventDetail(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const navigation = useNavigation<IndexScreenNavigationProp>();
+  const {params} = useRoute<IndexScreenRouteProp>();
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     padding: 20,
@@ -49,20 +51,27 @@ function EventDetail(): JSX.Element {
   const userData = useUserDataStore(state => state.bears);
   const setUserData = useUserDataStore(state => state.setData);
   const subscribe = useUserDataStore(state => state.subscribe);
-  const now = dayjs();
+
+  const progressFromParams = userData.find(
+    progress => progress.progressID === params.progressID,
+  );
+
+  const eventFromParams = progressFromParams?.events.find(
+    event => event.eventID === params?.eventID,
+  ) as Event;
   const [form, setForm] = useState<
     Omit<EventWithCompany, 'companyName' | 'eventID'>
   >({
-    progressStage: ProgressStage.OFFER_CALL,
-    startTime: now.valueOf(),
-    endTime: now.add(1, 'hour').valueOf(),
-    calendarSubscribed: false,
-    calendarEventID: '',
-    experience: '',
-    progressID: userData[0]?.progressID,
+    progressStage: eventFromParams.progressStage,
+    startTime: eventFromParams.startTime,
+    endTime: eventFromParams.endTime,
+    calendarSubscribed: eventFromParams.calendarSubscribed,
+    calendarEventID: eventFromParams.calendarEventID,
+    experience: eventFromParams.experience,
+    progressID: params?.progressID,
   });
 
-  const handleCreateEvent = async () => {
+  const handleEditEvent = async () => {
     if (!form?.progressID) {
       Toast.info({
         content: '请先选择已有公司进程',
@@ -105,20 +114,15 @@ function EventDetail(): JSX.Element {
     navigation.goBack();
   };
 
-  const latestStage =
-    userData
-      .find(progress => progress.progressID === form.progressID)
-      ?.events.slice()
-      .reverse()[0].progressStage || -1;
   const progressOptions: ProgressStage[] = ProgressStageList.filter(
-    stage => stage > latestStage,
+    stage => stage >= eventFromParams.progressStage,
   );
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={styles.topTabs}>
         <AntDesign name="close" size={36} onPress={() => navigation.goBack()} />
-        <Text style={styles.text}>创建事件</Text>
-        <AntDesign name="check" size={34} onPress={handleCreateEvent} />
+        <Text style={styles.text}>编辑事件</Text>
+        <AntDesign name="check" size={34} onPress={handleEditEvent} />
       </View>
       <ScrollView
         style={{flex: 1}}
@@ -128,23 +132,11 @@ function EventDetail(): JSX.Element {
         keyboardShouldPersistTaps={'handled'}>
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>公司</Text>
-          <Picker
-            selectedValue={form.progressID}
-            onValueChange={(value: string) => {
-              setForm({
-                ...form,
-                progressID: value,
-              });
-            }}>
-            {userData.map(progress => (
-              <Picker.Item
-                style={styles.companyOption}
-                label={progress.companyName}
-                value={progress.progressID}
-                key={progress.progressID}
-              />
-            ))}
-          </Picker>
+          <View>
+            <Text style={styles.companyOption}>
+              {progressFromParams?.companyName}
+            </Text>
+          </View>
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.inputPrefix}>事件状态</Text>
